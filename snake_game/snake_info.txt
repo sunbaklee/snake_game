@@ -1,0 +1,4 @@
+Name: LSH, Score: 550
+Name: ABS, Score: 480
+Name: QWE, Score: 430
+Name: KKH, Score: 180
