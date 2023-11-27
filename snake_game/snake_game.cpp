@@ -195,7 +195,7 @@ void ShowSnakeInfo(HWND hwnd) {
 	system(command);
 	//system("txt_upload.exe LSH 200");
 	system("txt_maker.exe");
-	if (fopen_s(&file, ".\\snake_info.txt", "r") == 0 && file != NULL) {
+	if (fopen_s(&file, "snake_info.txt", "r") == 0 && file != NULL) {
 		char line[100];
 		wstring message = L"Snake Ranking:\n\n";
 		int lineCount = 0;
@@ -228,7 +228,7 @@ void ShowSnakeInfo_no_quit(HWND hwnd) {
 	system(command);
 	//system("txt_upload.exe LSH 200");
 	system("txt_maker.exe");
-	if (fopen_s(&file, ".\\snake_info.txt", "r") == 0 && file != NULL) {
+	if (fopen_s(&file, "snake_info.txt", "r") == 0 && file != NULL) {
 		char line[100];
 		wstring message = L"Snake Ranking:\n\n";
 		int lineCount = 0;
@@ -409,11 +409,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		// Create the "시작" button
 		CreateWindow(_T("BUTTON"), _T("시작"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-			50, 200, 100, 50, hwnd, (HMENU)101, NULL, NULL);
+			30, 180, 150, 50, hwnd, (HMENU)101, NULL, NULL);
 
 		// Create the "정보" button
 		CreateWindow(_T("BUTTON"), _T("랭킹"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-			250, 200, 100, 50, hwnd, (HMENU)102, NULL, NULL);
+			200, 180, 150, 50, hwnd, (HMENU)102, NULL, NULL);
+		CreateWindow(_T("BUTTON"), _T("바로가기"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			200, 90, 100, 20, hwnd, (HMENU)103, NULL, NULL);
 		break;
 
 	case WM_COMMAND:
@@ -422,11 +424,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		case 101: // 처리할 버튼의 ID를 여기에 입력하세요 (시작 버튼)
 			StartWindow(hwnd);
 			ShowWindow(hwnd, SW_HIDE);
-			
+
 			break;
-		case 102: 
+		case 102:
 			ShowSnakeInfo_no_quit(hwnd);
-			
+		case 103:
+			ShellExecute(NULL, _T("open"), _T("https://github.com/sunbaklee/snake_game"), NULL, NULL, SW_SHOWNORMAL);
+			break;
+
 		}
 		break;
 
@@ -435,7 +440,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		HDC hdc = BeginPaint(hwnd, &ps);
 
 		SetTextAlign(hdc, TA_CENTER | TA_TOP);
-		TextOut(hdc, 200, 100, _T("Snake Game"), _tcslen(_T("Snake Game")));
+		//TextOut(hdc, 200, 70, _T("Snake Game"), _tcslen(_T("Snake Game")));
+		TextOut(hdc, 140, 90, _T("업데이트 정보"), _tcslen(_T("업데이트 정보")));
+		TextOut(hdc, 190,120, _T("업데이트 날짜: 2023-11-28"), _tcslen(_T("업데이트 날짜: 2023-11-28")));
+	
+		HFONT hFont = CreateFont(50, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+			CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, _T("Arial"));
+		HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+
+		RECT rc;
+		SetRect(&rc,40, 25, 620, 100); // 폰트 크기 및 위치 지정
+		DrawText(hdc, _T("Snake Game"), -1, &rc, DT_CENTER | DT_TOP | DT_SINGLELINE);
+
+		hFont = CreateFont(10, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+			CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, _T("Arial"));
+		hOldFont = (HFONT)SelectObject(hdc, hFont);
+
+		SetRect(&rc, 200, 240, 550, 260); // 폰트 크기 및 위치 지정
+		DrawText(hdc, _T("@copy right 2023, sunbaklee all rights reserved."), -1, &rc, DT_CENTER | DT_TOP | DT_SINGLELINE);
 
 		EndPaint(hwnd, &ps);
 		break;
@@ -444,8 +466,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
-				 // Other message handling code
-	
+	// Other message handling code
+
 	return DefWindowProc(hwnd, iMsg, wParam, lParam);
 }
 
