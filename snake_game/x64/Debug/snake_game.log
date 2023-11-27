@@ -1,0 +1,11 @@
+﻿  snake_game.cpp
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(125,61): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(272,43): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(275,63): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(277,184): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(278,162): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(279,89): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(281,66): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(286,23): warning C4244: '=': 'WPARAM'에서 'TCHAR'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\lsh60\snake_game\snake_game\snake_game.cpp(438,69): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  snake_game.vcxproj -> C:\Users\lsh60\snake_game\x64\Debug\snake_game.exe
