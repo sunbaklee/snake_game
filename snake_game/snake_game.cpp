@@ -8,11 +8,12 @@
 using namespace std;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK StartWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+void StartWindow(HWND hwnd);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	HWND 	hwnd;
-	MSG 	msg;
 	WNDCLASS	WndClass;
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	WndClass.lpfnWndProc = WndProc;
@@ -26,17 +27,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WndClass.lpszClassName = _T("Window Class Name");
 	RegisterClass(&WndClass);
 	hwnd = CreateWindow(_T("Window Class Name"),
-		_T("Window Title Name"),
+		_T("시작화면"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		400,
+		300,
 		NULL,
 		NULL,
 		hInstance,
 		NULL
 	);
+	MSG msg;
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -56,7 +58,6 @@ HWND hWndInput;
 wstring inputText; // 전역 변수로 입력된 글자를 저장할 wstring 선언
 int score = 0;
 static TCHAR str[100];
-
 
 void ItemGenerator()
 {
@@ -124,7 +125,6 @@ void DrawGameBoard(HDC hdc)
 	TextOut(hdc, 500, 20, scoreText.c_str(), scoreText.length());
 }
 
-
 void GameInit()
 {
 	int i;
@@ -145,7 +145,6 @@ void GameInit()
 	len = 2;
 	xDirect = 1; yDirect = 0;
 }
-
 
 void DirectControl(int DirectKey)
 {
@@ -198,7 +197,7 @@ void ShowSnakeInfo(HWND hwnd) {
 	system("txt_maker.exe");
 	if (fopen_s(&file, ".\\snake_info.txt", "r") == 0 && file != NULL) {
 		char line[100];
-		wstring message = L"Snake Information:\n\n";
+		wstring message = L"Snake Ranking:\n\n";
 		int lineCount = 0;
 
 		while (fgets(line, sizeof(line), file)) {
@@ -211,7 +210,7 @@ void ShowSnakeInfo(HWND hwnd) {
 		}
 
 		fclose(file);
-		MessageBox(hwnd, message.c_str(), L"Snake Ranking", MB_OK | MB_ICONINFORMATION);
+		//MessageBox(hwnd, message.c_str(), L"Snake Ranking", MB_OK | MB_ICONINFORMATION);
 		int result = MessageBox(hwnd, message.c_str(), L"Snake Ranking", MB_OK | MB_ICONINFORMATION);
 		if (result == IDOK) {
 			exit(0);
@@ -222,6 +221,35 @@ void ShowSnakeInfo(HWND hwnd) {
 	}
 }
 
+void ShowSnakeInfo_no_quit(HWND hwnd) {
+	char command[100];
+	FILE* file;
+	sprintf_s(command, "txt_upload.exe %ls %d", str, score);
+	system(command);
+	//system("txt_upload.exe LSH 200");
+	system("txt_maker.exe");
+	if (fopen_s(&file, ".\\snake_info.txt", "r") == 0 && file != NULL) {
+		char line[100];
+		wstring message = L"Snake Ranking:\n\n";
+		int lineCount = 0;
+
+		while (fgets(line, sizeof(line), file)) {
+			// Assuming the file contains lines in the format: Name: XYZ, Score: N
+			wstring lineW = wstring(line, line + strlen(line));
+			message += lineW;
+			lineCount++;
+			if (lineCount >= 10) // Read 10 lines
+				break;
+		}
+
+		fclose(file);
+		//MessageBox(hwnd, message.c_str(), L"Snake Ranking", MB_OK | MB_ICONINFORMATION);
+		int result = MessageBox(hwnd, message.c_str(), L"Snake Ranking", MB_OK | MB_ICONINFORMATION);
+	}
+	else {
+		MessageBox(hwnd, L"Failed to open snake_info.txt", L"Error", MB_OK | MB_ICONERROR);
+	}
+}
 
 LRESULT CALLBACK NewWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -244,9 +272,10 @@ LRESULT CALLBACK NewWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		TextOut(hdc, 220, 150, str, _tcslen(str));
 		{
 			wstring scoreText = L"Score: " + to_wstring(score);
-			TextOut(hdc, 160, 70, scoreText.c_str(), scoreText.length());
+			TextOut(hdc, 155, 70, scoreText.c_str(), scoreText.length());
 		}
 		TextOut(hdc, 10, 200, _T("점수 등록을 하려면 이름 입력후 enter키를 누르세요"), _tcslen(_T("점수 등록을 하려면 이름 입력후 enter키를 누르세요")));
+		TextOut(hdc, 30, 220, _T("등록하지 않으려면 그냥 enter키를 누르세요"), _tcslen(_T("등록하지 않으려면 그냥 enter키를 누르세요")));
 		TextOut(hdc, 120, 150, _T("이름(이니셜) : "), _tcslen(_T("이름(이니셜) : ")));
 		SetTextColor(hdc, RGB(255, 0, 0)); // Set text color to red
 		TextOut(hdc, 150, 50, _T("Game Over"), _tcslen(_T("Game Over")));
@@ -280,7 +309,7 @@ void NewWindow(HWND hwnd) {
 
 	// 새로운 창을 생성합니다.
 	HWND newHwnd = CreateWindow(_T("New Window Class Name"), // 여기에 새로운 클래스 이름을 사용하세요.
-		_T("New Window Title"), // 새로운 창의 제목을 설정하세요.
+		_T("점수등록"), // 새로운 창의 제목을 설정하세요.
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -344,14 +373,13 @@ void MovingWorm(HWND hwnd)
 	}
 }
 
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK StartWndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
 	switch (iMsg) {
 	case WM_CREATE:
-		system("txt_maker.exe");
+		//system("txt_maker.exe");
 		GameInit();
 		SetTimer(hwnd, 1, 100, NULL);
 		return 0;
@@ -373,4 +401,85 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (iMsg) {
+	case WM_CREATE:
+		// Create the "시작" button
+		CreateWindow(_T("BUTTON"), _T("시작"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			50, 200, 100, 50, hwnd, (HMENU)101, NULL, NULL);
+
+		// Create the "정보" button
+		CreateWindow(_T("BUTTON"), _T("랭킹"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			250, 200, 100, 50, hwnd, (HMENU)102, NULL, NULL);
+		break;
+
+	case WM_COMMAND:
+		// Handle button clicks here if needed
+		switch (LOWORD(wParam)) {
+		case 101: // 처리할 버튼의 ID를 여기에 입력하세요 (시작 버튼)
+			StartWindow(hwnd);
+			ShowWindow(hwnd, SW_HIDE);
+			
+			break;
+		case 102: 
+			ShowSnakeInfo_no_quit(hwnd);
+			
+		}
+		break;
+
+	case WM_PAINT: {
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hwnd, &ps);
+
+		SetTextAlign(hdc, TA_CENTER | TA_TOP);
+		TextOut(hdc, 200, 100, _T("Snake Game"), _tcslen(_T("Snake Game")));
+
+		EndPaint(hwnd, &ps);
+		break;
+	}
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+				 // Other message handling code
+	
+	return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+
+
+void StartWindow(HWND hwnd) {
+	WNDCLASS StartWndClass;
+	StartWndClass.style = CS_HREDRAW | CS_VREDRAW;
+	StartWndClass.lpfnWndProc = StartWndProc; // 시작 창의 동작을 위한 StartWndProc 사용
+	StartWndClass.cbClsExtra = 0;
+	StartWndClass.cbWndExtra = 0;
+	StartWndClass.hInstance = GetModuleHandle(NULL);
+	StartWndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	StartWndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	StartWndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	StartWndClass.lpszMenuName = NULL;
+	StartWndClass.lpszClassName = _T("Start Window Class Name"); // 시작 창의 클래스 이름 변경
+	RegisterClass(&StartWndClass);
+
+	HWND startHwnd = CreateWindow(_T("Start Window Class Name"), // 새 클래스 이름으로 업데이트
+		_T("뱀게임"),
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		hwnd,
+		NULL,
+		GetModuleHandle(NULL),
+		NULL
+	);
+
+
+	if (startHwnd != NULL) {
+		ShowWindow(startHwnd, SW_SHOW);
+		UpdateWindow(startHwnd);
+	}
 }
