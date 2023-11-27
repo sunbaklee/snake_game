@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <string>
 #include <stdlib.h>
+#include <mmsystem.h>
+#pragma comment(lib, "Winmm.lib")
 using namespace std;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
-
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
@@ -25,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WndClass.lpszClassName = _T("Window Class Name");
 	RegisterClass(&WndClass);
 	hwnd = CreateWindow(_T("Window Class Name"),
-		_T("Snake Game"),
+		_T("Window Title Name"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -74,6 +75,7 @@ void ItemGenerator()
 	}
 	return;
 }
+
 void ItemGenerator2()
 {
 	int i, x, y;
@@ -118,7 +120,6 @@ void DrawGameBoard(HDC hdc)
 
 	for (i = 1; i < len; i++)
 		Ellipse(hdc, wormX[i] * 20, wormY[i] * 20, (wormX[i] + 1) * 20, (wormY[i] + 1) * 20);
-
 	wstring scoreText = L"Score: " + to_wstring(score);
 	TextOut(hdc, 500, 20, scoreText.c_str(), scoreText.length());
 }
@@ -193,6 +194,7 @@ void ShowSnakeInfo(HWND hwnd) {
 	FILE* file;
 	sprintf_s(command, "txt_upload.exe %ls %d", str, score);
 	system(command);
+	//system("txt_upload.exe LSH 200");
 	system("txt_maker.exe");
 	if (fopen_s(&file, ".\\snake_info.txt", "r") == 0 && file != NULL) {
 		char line[100];
@@ -278,7 +280,7 @@ void NewWindow(HWND hwnd) {
 
 	// 새로운 창을 생성합니다.
 	HWND newHwnd = CreateWindow(_T("New Window Class Name"), // 여기에 새로운 클래스 이름을 사용하세요.
-		_T("Game Over"), // 새로운 창의 제목을 설정하세요.
+		_T("New Window Title"), // 새로운 창의 제목을 설정하세요.
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -309,6 +311,7 @@ void MovingWorm(HWND hwnd)
 	if (board[wormY[0]][wormX[0]] == -1 || board[wormY[0]][wormX[0]] == 3)
 	{
 		if (!wallHit) {
+			PlaySound(TEXT("thud.wav"), NULL, SND_FILENAME | SND_ASYNC);
 			wallHit = true;
 			NewWindow(hwnd); // Show snake info when hitting the wall
 			//wallHit = true;
@@ -324,6 +327,7 @@ void MovingWorm(HWND hwnd)
 			len = len + 1;
 			board[wormY[0]][wormX[0]] = 0;
 			score += 10;
+			PlaySound(TEXT("apple.wav"), NULL, SND_FILENAME | SND_ASYNC);
 			ItemGenerator2();
 		}
 		else
