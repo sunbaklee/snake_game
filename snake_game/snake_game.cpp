@@ -428,6 +428,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		case 102:
 			ShowSnakeInfo_no_quit(hwnd);
+			break;
 		case 103:
 			ShellExecute(NULL, _T("open"), _T("https://github.com/sunbaklee/snake_game"), NULL, NULL, SW_SHOWNORMAL);
 			break;
