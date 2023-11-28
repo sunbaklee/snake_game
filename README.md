@@ -6,6 +6,26 @@
 
 뱀 게임은 전통적인 아케이드 게임으로, 뱀을 조작하여 먹이를 먹고 자신의 몸통을 늘려가는 게임입니다. 
 
+## 관계도
+
+```mermaid
+graph TD;
+    A((WinMain)) -->|CreateWindow| B[WndProc메인화면];
+    B -->|startwindow게임시작| C[StartWndProc게임화면];
+    C -->|WM_CREATE| D(GameInit);
+    C -->|WM_PAINT| E(DrawGameBoard);
+    C -->|WM_KEYDOWN| F(DirectControl);
+    C -->|WM_TIMER| G(MovingWorm);
+    C -->|WM_DESTROY| H(KillTimer, PostQuitMessage);
+    F -->|DirectControl| G;
+    G -->|MovingWorm| E;
+    G -->|아이템 확인| K(ItemGenerator2);
+    E -->|DrawGameBoard| C;
+    D -->|ItemGenerator| E;
+    G -->|충돌 확인| I(NewWindow게임오버 화면);
+    I -->|ShowSnakeInfo| J(랭킹화면);
+```
+
 ### 기능
 
 - **뱀 조작**: 방향키를 사용하여 뱀을 이동시킵니다.
