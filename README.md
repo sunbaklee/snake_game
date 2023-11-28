@@ -11,6 +11,7 @@
 ```mermaid
 graph TD;
     A((WinMain)) -->|CreateWindow| B[WndProc메인화면];
+    B --> |ShowSnakeInfo_no_quit| L[랭킹화면];
     B -->|startwindow게임시작| C[StartWndProc게임화면];
     C -->|WM_CREATE| D(GameInit);
     C -->|WM_PAINT| E(DrawGameBoard);
